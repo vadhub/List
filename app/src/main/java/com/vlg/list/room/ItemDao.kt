@@ -34,6 +34,9 @@ interface ItemDao {
     @Query("SELECT * FROM `group`")
     fun getGroupWithItems(): Flow<List<GroupWithItems>>
 
+    @Query("SELECT * FROM `group`")
+    fun getGroup(): Flow<List<Group>>
+
     @Transaction
     @Query("SELECT * FROM `group` WHERE id_group = :groupId")
     fun getGroupWithItemsById(groupId: Long): Flow<GroupWithItems>

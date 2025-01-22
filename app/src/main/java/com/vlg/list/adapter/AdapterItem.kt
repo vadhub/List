@@ -1,4 +1,4 @@
-package com.vlg.list
+package com.vlg.list.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,11 +8,11 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.vlg.list.R
 import com.vlg.list.model.Item
 
 class AdapterItem(
-    private val add: (item: Item) -> Unit,
-    private val remove: (item: Item) -> Unit
+    private val update: (item: Item) -> Unit
 ) : RecyclerView.Adapter<AdapterItem.ItemHolder>() {
 
     var items: List<Item> = emptyList()
@@ -32,11 +32,11 @@ class AdapterItem(
             name.text = item.name
             buttonAdd.setOnClickListener {
                 item.count += 1
-                add.invoke(item)
+                update.invoke(item)
             }
             buttonRemove.setOnClickListener {
                 item.count -= 1
-                remove.invoke(item)
+                update.invoke(item)
             }
         }
     }

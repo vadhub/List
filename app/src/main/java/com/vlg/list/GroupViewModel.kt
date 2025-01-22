@@ -15,6 +15,8 @@ class GroupViewModel(private val dao: ItemDao) : ViewModel() {
 
     fun getGroupWithItems(): Flow<List<GroupWithItems>> = dao.getGroupWithItems()
 
+    fun getGroupList(): Flow<List<Group>> = dao.getGroup()
+
     fun getGroupWithItemsById(groupId: Long): Flow<GroupWithItems> = dao.getGroupWithItemsById(groupId)
 
     fun saveGroupWithItems(groupWithItems: GroupWithItems) = viewModelScope.launch(Dispatchers.IO) {

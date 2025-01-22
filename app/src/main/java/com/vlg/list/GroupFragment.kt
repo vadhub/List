@@ -10,12 +10,12 @@ import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.vlg.list.adapter.AdapterGroup
 import com.vlg.list.adapter.AdapterItem
-import com.vlg.list.dialog.SaveItemDialog
 import com.vlg.list.model.Item
 import kotlinx.coroutines.launch
 
-class SetItemsFragment : Fragment() {
+class GroupFragment : Fragment() {
 
     val viewModel: GroupViewModel by lazy {
         ViewModelProvider(this, GroupViewModelFactory((context?.applicationContext as App).database.itemDao()))[GroupViewModel::class.java]
@@ -26,33 +26,25 @@ class SetItemsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_set_items, container, false)
+        return inflater.inflate(R.layout.fragment_group, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val recycler = view.findViewById<RecyclerView>(R.id.recycler)
-        val buttonAdd = view.findViewById<FloatingActionButton>(R.id.addButton)
-
-        val idGroup = arguments?.getLong("groupId") ?: 0
+        val recycler = view.findViewById<RecyclerView>(R.id.recyclerGroup)
+        val buttonAdd = view.findViewById<FloatingActionButton>(R.id.addGroupButton)
 
         recycler.layoutManager = LinearLayoutManager(context)
-        val update: (Item) -> Unit = {viewModel.updateItem(it)}
-        val adapter = AdapterItem(update)
-        getGroupWithItems(adapter, idGroup)
+        val adapter = AdapterGroup()
         recycler.adapter = adapter
+        getGroupList(adapter)
         buttonAdd.setOnClickListener {  }
     }
 
-    fun getGroupWithItems(adapter: AdapterItem, id: Long) {
+    fun getGroupList(adapter: AdapterGroup) {
         lifecycle.coroutineScope.launch {
-            viewModel.getGroupWithItemsById(id).collect {
-                adapter.items = it.items
+            viewModel.getGroupList().collect {
+                adapter.groups = it
             }
         }
-    }
-
-    fun createDialogSaveItem(save: (String, Boolean) -> Unit) {
-        val dialogSave = SaveItemDialog(save)
-        dialogSave.show(childFragmentManager, "SaveItemDialog")
     }
 }
