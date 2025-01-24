@@ -30,16 +30,17 @@ class AdapterItem(
         private val buttonRemove = view.findViewById<Button>(R.id.buttonRemove)
 
         fun bind(item: Item) {
+            count.text = item.count.toString()
             name.text = item.name
             buttonAdd.setOnClickListener {
                 item.count += 1
-                update.invoke(item)
                 count.text = item.count.toString()
+                update.invoke(item)
             }
             buttonRemove.setOnClickListener {
                 item.count -= 1
-                update.invoke(item)
                 count.text = item.count.toString()
+                update.invoke(item)
             }
         }
     }
