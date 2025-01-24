@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity("group_")
 data class Group(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo("id_group")
     val id: Long,
     @ColumnInfo("name_group")

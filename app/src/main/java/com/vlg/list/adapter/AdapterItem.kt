@@ -25,6 +25,7 @@ class AdapterItem(
     inner class ItemHolder(view: View) : ViewHolder(view) {
 
         private val name = view.findViewById<TextView>(R.id.name)
+        private val count = view.findViewById<TextView>(R.id.count)
         private val buttonAdd = view.findViewById<Button>(R.id.buttonAdd)
         private val buttonRemove = view.findViewById<Button>(R.id.buttonRemove)
 
@@ -33,10 +34,12 @@ class AdapterItem(
             buttonAdd.setOnClickListener {
                 item.count += 1
                 update.invoke(item)
+                count.text = item.count.toString()
             }
             buttonRemove.setOnClickListener {
                 item.count -= 1
                 update.invoke(item)
+                count.text = item.count.toString()
             }
         }
     }

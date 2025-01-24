@@ -1,11 +1,15 @@
 package com.vlg.list
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,14 +26,15 @@ class GroupFragment : Fragment() {
 
     private var navigator: Navigator = Navigator.Empty()
 
-    val viewModel: GroupViewModel by lazy {
-        ViewModelProvider(
-            this,
-            GroupViewModelFactory(
-                (context?.applicationContext as App).database.itemDao(),
-                SaveConfig(requireContext())
-            )
-        )[GroupViewModel::class.java]
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        navigator = context as Navigator
+    }
+
+    val viewModel: GroupViewModel by activityViewModels {
+        GroupViewModelFactory(
+            (context?.applicationContext as App).database.itemDao(), SaveConfig(requireContext())
+        )
     }
 
     override fun onCreateView(
@@ -47,8 +52,8 @@ class GroupFragment : Fragment() {
 
         recycler.layoutManager = LinearLayoutManager(context)
         val adapter = AdapterGroup {
-            navigator.startFragment(SetItemsFragment())
             viewModel.currentGroup = it
+            navigator.startFragment(SetItemsFragment())
         }
         recycler.adapter = adapter
         getGroupList(adapter)

@@ -2,12 +2,14 @@ package com.vlg.list
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,17 +25,13 @@ class SetItemsFragment : Fragment() {
 
     private var navigator: Navigator = Navigator.Empty()
 
-    val viewModel: GroupViewModel by lazy {
-        ViewModelProvider(
-            this,
-            GroupViewModelFactory(
-                (context?.applicationContext as App).database.itemDao(),
-                SaveConfig(requireContext())
-            )
-        )[GroupViewModel::class.java]
+    val viewModel: GroupViewModel by activityViewModels {
+        GroupViewModelFactory(
+            (context?.applicationContext as App).database.itemDao(), SaveConfig(requireContext())
+        )
     }
 
-    var currentGroup = Group.empty
+    val currentGroup by lazy { viewModel.currentGroup }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -69,7 +67,6 @@ class SetItemsFragment : Fragment() {
         lifecycle.coroutineScope.launch {
             viewModel.getGroupWithItemsById().collect {
                 adapter.items = it.items
-                currentGroup = it.group
             }
         }
     }
