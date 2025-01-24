@@ -22,7 +22,7 @@ interface ItemDao {
     suspend fun updateItem(item: Item)
 
     @Insert
-    fun insertGroup(group: Group): Long
+    suspend fun insertGroup(group: Group): Long
 
     @Update
     fun updateGroup(group: Group)
@@ -30,11 +30,11 @@ interface ItemDao {
     @Delete
     fun deleteGroup(group: Group)
 
-    @Query("SELECT * FROM `group`")
+    @Query("SELECT * FROM group_")
     fun getGroups(): Flow<List<Group>>
 
     @Transaction
-    @Query("SELECT * FROM `group` WHERE id_group = :groupId")
+    @Query("SELECT * FROM group_ WHERE id_group = :groupId")
     fun getGroupWithItemsById(groupId: Long): Flow<GroupWithItems>
 
     @Transaction

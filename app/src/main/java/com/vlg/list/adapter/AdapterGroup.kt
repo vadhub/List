@@ -10,8 +10,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.vlg.list.R
 import com.vlg.list.model.Group
 
-class AdapterGroup(
-) : RecyclerView.Adapter<AdapterGroup.ItemHolder>() {
+class AdapterGroup(private val clickOnViewListener: (Group) -> Unit) : RecyclerView.Adapter<AdapterGroup.ItemHolder>() {
 
     var groups: List<Group> = emptyList()
         @SuppressLint("NotifyDataSetChanged")
@@ -20,12 +19,13 @@ class AdapterGroup(
             notifyDataSetChanged()
         }
 
-    inner class ItemHolder(view: View) : ViewHolder(view) {
+    inner class ItemHolder(private val view: View) : ViewHolder(view) {
 
         private val name = view.findViewById<TextView>(R.id.nameGroup)
 
         fun bind(group: Group) {
             name.text = group.nameGroup
+            view.setOnClickListener { clickOnViewListener.invoke(group) }
         }
     }
 

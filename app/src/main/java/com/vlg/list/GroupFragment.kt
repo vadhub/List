@@ -20,6 +20,8 @@ import java.util.Date
 
 class GroupFragment : Fragment() {
 
+    private var navigator: Navigator = Navigator.Empty()
+
     val viewModel: GroupViewModel by lazy {
         ViewModelProvider(
             this,
@@ -44,7 +46,10 @@ class GroupFragment : Fragment() {
         val buttonAdd = view.findViewById<FloatingActionButton>(R.id.addGroupButton)
 
         recycler.layoutManager = LinearLayoutManager(context)
-        val adapter = AdapterGroup()
+        val adapter = AdapterGroup {
+            navigator.startFragment(SetItemsFragment())
+            viewModel.currentGroup = it
+        }
         recycler.adapter = adapter
         getGroupList(adapter)
         buttonAdd.setOnClickListener {

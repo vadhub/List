@@ -9,5 +9,5 @@ data class GroupWithItems(
         parentColumn = "id_group",
         entityColumn = "group_id"
     )
-    val items: List<Item>
+    val items: List<Item> = emptyList()
 )

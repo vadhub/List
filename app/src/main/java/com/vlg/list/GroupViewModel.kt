@@ -23,7 +23,7 @@ class GroupViewModel(private val dao: ItemDao, private val saveConfig: SaveConfi
         dao.saveGroupWithItems(groupWithItems.group, groupWithItems.items)
     }
 
-    fun saveGroup(group: Group) {
+    fun saveGroup(group: Group) = viewModelScope.launch {
         currentGroup = group
         saveConfig.saveCurrentGroupId(dao.insertGroup(group))
     }
