@@ -1,41 +1,28 @@
-package com.vlg.list
+package com.vlg.list.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.vlg.list.adapter.AdapterGroup
-import com.vlg.list.dialog.SaveGroupDialog
+import com.vlg.list.App
+import com.vlg.list.DateFormatter
+import com.vlg.list.Navigator
+import com.vlg.list.R
+import com.vlg.list.SaveConfig
+import com.vlg.list.ui.adapter.AdapterGroup
+import com.vlg.list.ui.dialog.SaveGroupDialog
 import com.vlg.list.model.Group
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
 
-class GroupFragment : Fragment() {
-
-    private var navigator: Navigator = Navigator.Empty()
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        navigator = context as Navigator
-    }
-
-    val viewModel: GroupViewModel by activityViewModels {
-        GroupViewModelFactory(
-            (context?.applicationContext as App).database.itemDao(), SaveConfig(requireContext())
-        )
-    }
+class GroupFragment : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,14 +45,10 @@ class GroupFragment : Fragment() {
         recycler.adapter = adapter
         getGroupList(adapter)
         buttonAdd.setOnClickListener {
-            createDialogSaveGroup { name -> saveGroup(name) }
+            createDialogSaveGroup { name ->
+                viewModel.saveGroup(Group(0, name, DateFormatter.getDate()))
+            }
         }
-    }
-
-    fun saveGroup(name: String) {
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
-        val date = Date()
-        viewModel.saveGroup(Group(0, name, formatter.format(date)))
     }
 
     fun getGroupList(adapter: AdapterGroup) {

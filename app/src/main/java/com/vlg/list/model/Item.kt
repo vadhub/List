@@ -13,4 +13,5 @@ data class Item(
     var count: Int,
     @ColumnInfo("group_id")
     var groupId: Long,
+    var dataChange: String,
 )

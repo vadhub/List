@@ -1,8 +1,10 @@
-package com.vlg.list
+package com.vlg.list.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.vlg.list.DateFormatter
+import com.vlg.list.SaveConfig
 import com.vlg.list.model.Group
 import com.vlg.list.model.GroupWithItems
 import com.vlg.list.model.Item
@@ -51,10 +53,12 @@ class GroupViewModel(private val dao: ItemDao, private val saveConfig: SaveConfi
     fun createNewItem(isList: Boolean, name: String) {
         if (isList) {
             val list = ArrayList<Item>()
-            name.split(',').forEach { list.add(Item(0, it, 0, currentGroup.id)) }
+            name.split(',').forEach { list.add(Item(0, it, 0, currentGroup.id,
+                DateFormatter.getDate()
+            )) }
             insertAll(list)
         } else {
-            saveItem(Item(0, name, 0, currentGroup.id))
+            saveItem(Item(0, name, 0, currentGroup.id, DateFormatter.getDate()))
         }
     }
 }

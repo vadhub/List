@@ -1,4 +1,4 @@
-package com.vlg.list.adapter
+package com.vlg.list.ui.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

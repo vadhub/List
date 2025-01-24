@@ -1,4 +1,4 @@
-package com.vlg.list.adapter
+package com.vlg.list.ui.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.vlg.list.DateFormatter
 import com.vlg.list.R
 import com.vlg.list.model.Item
 
@@ -34,11 +35,13 @@ class AdapterItem(
             name.text = item.name
             buttonAdd.setOnClickListener {
                 item.count += 1
+                item.dataChange = DateFormatter.getDate()
                 count.text = item.count.toString()
                 update.invoke(item)
             }
             buttonRemove.setOnClickListener {
                 item.count -= 1
+                item.dataChange = DateFormatter.getDate()
                 count.text = item.count.toString()
                 update.invoke(item)
             }

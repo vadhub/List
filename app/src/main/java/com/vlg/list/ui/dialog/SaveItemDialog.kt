@@ -1,4 +1,4 @@
-package com.vlg.list.dialog
+package com.vlg.list.ui.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
