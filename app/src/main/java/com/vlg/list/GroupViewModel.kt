@@ -44,11 +44,15 @@ class GroupViewModel(private val dao: ItemDao, private val saveConfig: SaveConfi
         dao.deleteGroupWithItems(group)
     }
 
+    fun insertAll(items: List<Item>) = viewModelScope.launch(Dispatchers.IO) {
+        dao.insertItems(items)
+    }
+
     fun createNewItem(isList: Boolean, name: String) {
         if (isList) {
             val list = ArrayList<Item>()
             name.split(',').forEach { list.add(Item(0, it, 0, currentGroup.id)) }
-            updateGroupWithItems(GroupWithItems(currentGroup, list))
+            insertAll(list)
         } else {
             saveItem(Item(0, name, 0, currentGroup.id))
         }

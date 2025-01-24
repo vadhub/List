@@ -18,6 +18,11 @@ interface ItemDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertItem(item: Item)
 
+    @Transaction
+    suspend fun insertItems(list: List<Item>) {
+        list.forEach { insertItem(it) }
+    }
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateItem(item: Item)
 
