@@ -12,4 +12,8 @@ data class Group(
     @ColumnInfo("name_group")
     val nameGroup: String,
     val dateCreated: String,
-)
+) {
+    companion object {
+        val empty = Group(-1, "", "")
+    }
+}

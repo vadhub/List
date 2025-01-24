@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
@@ -12,14 +14,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.vlg.list.adapter.AdapterItem
 import com.vlg.list.dialog.SaveItemDialog
+import com.vlg.list.model.Group
+import com.vlg.list.model.GroupWithItems
 import com.vlg.list.model.Item
 import kotlinx.coroutines.launch
 
 class SetItemsFragment : Fragment() {
 
     val viewModel: GroupViewModel by lazy {
-        ViewModelProvider(this, GroupViewModelFactory((context?.applicationContext as App).database.itemDao()))[GroupViewModel::class.java]
+        ViewModelProvider(
+            this,
+            GroupViewModelFactory(
+                (context?.applicationContext as App).database.itemDao(),
+                SaveConfig(requireContext())
+            )
+        )[GroupViewModel::class.java]
     }
+
+    var currentGroup = Group.empty
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,21 +44,23 @@ class SetItemsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val recycler = view.findViewById<RecyclerView>(R.id.recycler)
         val buttonAdd = view.findViewById<FloatingActionButton>(R.id.addButton)
-
-        val idGroup = arguments?.getLong("groupId") ?: 0
-
+        val groupName = view.findViewById<Toolbar>(R.id.toolbar)
         recycler.layoutManager = LinearLayoutManager(context)
-        val update: (Item) -> Unit = {viewModel.updateItem(it)}
+        val update: (Item) -> Unit = { viewModel.updateItem(it) }
         val adapter = AdapterItem(update)
-        getGroupWithItems(adapter, idGroup)
+        getGroupWithItems(adapter)
         recycler.adapter = adapter
-        buttonAdd.setOnClickListener {  }
+        buttonAdd.setOnClickListener {
+            createDialogSaveItem { name, isList -> viewModel.createNewItem(isList, name) }
+        }
+        groupName.title = currentGroup.nameGroup
     }
 
-    fun getGroupWithItems(adapter: AdapterItem, id: Long) {
+    fun getGroupWithItems(adapter: AdapterItem) {
         lifecycle.coroutineScope.launch {
-            viewModel.getGroupWithItemsById(id).collect {
+            viewModel.getGroupWithItemsById().collect {
                 adapter.items = it.items
+                currentGroup = it.group
             }
         }
     }

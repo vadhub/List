@@ -1,5 +1,6 @@
 package com.vlg.list
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,14 +12,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.vlg.list.adapter.AdapterGroup
-import com.vlg.list.adapter.AdapterItem
-import com.vlg.list.model.Item
+import com.vlg.list.dialog.SaveGroupDialog
+import com.vlg.list.model.Group
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class GroupFragment : Fragment() {
 
     val viewModel: GroupViewModel by lazy {
-        ViewModelProvider(this, GroupViewModelFactory((context?.applicationContext as App).database.itemDao()))[GroupViewModel::class.java]
+        ViewModelProvider(
+            this,
+            GroupViewModelFactory(
+                (context?.applicationContext as App).database.itemDao(),
+                SaveConfig(requireContext())
+            )
+        )[GroupViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -29,6 +38,7 @@ class GroupFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_group, container, false)
     }
 
+    @SuppressLint("SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerGroup)
         val buttonAdd = view.findViewById<FloatingActionButton>(R.id.addGroupButton)
@@ -37,7 +47,15 @@ class GroupFragment : Fragment() {
         val adapter = AdapterGroup()
         recycler.adapter = adapter
         getGroupList(adapter)
-        buttonAdd.setOnClickListener {  }
+        buttonAdd.setOnClickListener {
+            createDialogSaveGroup { name -> saveGroup(name) }
+        }
+    }
+
+    fun saveGroup(name: String) {
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        val date = Date()
+        viewModel.saveGroup(Group(0, name, formatter.format(date)))
     }
 
     fun getGroupList(adapter: AdapterGroup) {
@@ -46,5 +64,10 @@ class GroupFragment : Fragment() {
                 adapter.groups = it
             }
         }
+    }
+
+    fun createDialogSaveGroup(save: (String) -> Unit) {
+        val dialogSave = SaveGroupDialog(save)
+        dialogSave.show(childFragmentManager, "SaveGroupDialog")
     }
 }

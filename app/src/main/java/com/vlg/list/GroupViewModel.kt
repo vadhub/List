@@ -11,16 +11,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class GroupViewModel(private val dao: ItemDao) : ViewModel() {
+class GroupViewModel(private val dao: ItemDao, private val saveConfig: SaveConfig) : ViewModel() {
 
-    fun getGroupWithItems(): Flow<List<GroupWithItems>> = dao.getGroupWithItems()
+    var currentGroup: Group = Group.empty
 
-    fun getGroupList(): Flow<List<Group>> = dao.getGroup()
+    fun getGroupList(): Flow<List<Group>> = dao.getGroups()
 
-    fun getGroupWithItemsById(groupId: Long): Flow<GroupWithItems> = dao.getGroupWithItemsById(groupId)
+    fun getGroupWithItemsById(): Flow<GroupWithItems> = dao.getGroupWithItemsById(saveConfig.getCurrentGroupId())
 
     fun saveGroupWithItems(groupWithItems: GroupWithItems) = viewModelScope.launch(Dispatchers.IO) {
         dao.saveGroupWithItems(groupWithItems.group, groupWithItems.items)
+    }
+
+    fun saveGroup(group: Group) {
+        currentGroup = group
+        saveConfig.saveCurrentGroupId(dao.insertGroup(group))
+    }
+
+    fun saveItem(item: Item) = viewModelScope.launch(Dispatchers.IO) {
+        dao.insertItem(item)
     }
 
     fun updateGroupWithItems(groupWithItems: GroupWithItems) = viewModelScope.launch(Dispatchers.IO) {
@@ -34,10 +43,20 @@ class GroupViewModel(private val dao: ItemDao) : ViewModel() {
     fun deleteGroupWithItems(group: Group) = viewModelScope.launch(Dispatchers.IO) {
         dao.deleteGroupWithItems(group)
     }
+
+    fun createNewItem(isList: Boolean, name: String) {
+        if (isList) {
+            val list = ArrayList<Item>()
+            name.split(',').forEach { list.add(Item(0, it, 0, currentGroup.id)) }
+            updateGroupWithItems(GroupWithItems(currentGroup, list))
+        } else {
+            saveItem(Item(0, name, 0, currentGroup.id))
+        }
+    }
 }
 
-class GroupViewModelFactory(private val dao: ItemDao) : ViewModelProvider.Factory {
+class GroupViewModelFactory(private val dao: ItemDao, private val saveConfig: SaveConfig) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return GroupViewModel(dao) as T
+        return GroupViewModel(dao, saveConfig) as T
     }
 }
