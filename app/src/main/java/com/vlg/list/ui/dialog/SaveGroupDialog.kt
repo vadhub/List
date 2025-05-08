@@ -7,23 +7,28 @@ import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.vlg.list.R
 
-class SaveGroupDialog (private val save: (newName: String) -> Unit) : DialogFragment() {
-
-    private var name: String = ""
-
-    fun setName(name: String) {
-        this.name = name
-    }
+class SaveGroupDialog(
+    private val save: (newName: String) -> Unit,
+    private val existingName: String = "",
+    private val title: String = "Save Group"
+) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = layoutInflater.inflate(R.layout.dialog_save_group, null)
         val nameText: EditText = view.findViewById(R.id.nameGroupEditText)
-        nameText.setText(name)
+        nameText.setText(existingName)
+
         val builder: AlertDialog.Builder = AlertDialog.Builder(view.context)
-        builder.setView(view).setPositiveButton("save", ({ dialog, which ->
-            save.invoke(nameText.text.toString())
-            dialog.dismiss()
-        }))
+            .setView(view)
+            .setTitle(title)
+            .setPositiveButton("Save") { dialog, _ ->
+                save.invoke(nameText.text.toString())
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+
         return builder.create()
     }
 }

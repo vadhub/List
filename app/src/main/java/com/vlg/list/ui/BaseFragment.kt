@@ -20,4 +20,5 @@ open class BaseFragment : Fragment() {
             (context?.applicationContext as App).database.itemDao(), SaveConfig(requireContext())
         )
     }
+
 }
