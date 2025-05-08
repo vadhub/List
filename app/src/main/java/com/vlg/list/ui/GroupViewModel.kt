@@ -11,15 +11,16 @@ import com.vlg.list.model.Item
 import com.vlg.list.room.ItemDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class GroupViewModel(private val dao: ItemDao, private val saveConfig: SaveConfig) : ViewModel() {
-
+class GroupViewModel(val dao: ItemDao, private val saveConfig: SaveConfig) : ViewModel() {
     var currentGroup: Group = Group.empty
 
     fun getGroupList(): Flow<List<Group>> = dao.getGroups()
 
-    fun getGroupWithItemsById(): Flow<GroupWithItems> = dao.getGroupWithItemsById(saveConfig.getCurrentGroupId())
+    fun getGroupWithItemsById(id: Long): Flow<GroupWithItems> = dao.getGroupWithItemsById(id)
+    fun getGroupWithItemsById(): Flow<GroupWithItems> = dao.getGroupWithItemsById(currentGroup.id)
 
     fun saveGroupWithItems(groupWithItems: GroupWithItems) = viewModelScope.launch(Dispatchers.IO) {
         dao.saveGroupWithItems(groupWithItems.group, groupWithItems.items)
@@ -40,6 +41,10 @@ class GroupViewModel(private val dao: ItemDao, private val saveConfig: SaveConfi
 
     fun updateItem(item: Item) = viewModelScope.launch(Dispatchers.IO) {
         dao.updateItem(item)
+    }
+
+    fun updateGroup(group: Group) = viewModelScope.launch(Dispatchers.IO) {
+        dao.updateGroup(group)
     }
 
     fun deleteGroupWithItems(group: Group) = viewModelScope.launch(Dispatchers.IO) {

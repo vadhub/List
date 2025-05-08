@@ -17,9 +17,6 @@ import com.vlg.list.ui.dialog.SaveItemDialog
 import kotlinx.coroutines.launch
 
 class SetItemsFragment : BaseFragment() {
-
-    private val currentGroup by lazy { viewModel.currentGroup }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,7 +40,7 @@ class SetItemsFragment : BaseFragment() {
             createDialogSaveItem { name, isList -> viewModel.createNewItem(isList, name) }
         }
         menu.setOnClickListener { navigator.startFragment(GroupFragment()) }
-        groupName.title = currentGroup.nameGroup
+        groupName.title = viewModel.currentGroup.nameGroup
     }
 
     fun getGroupWithItems(adapter: AdapterItem) {

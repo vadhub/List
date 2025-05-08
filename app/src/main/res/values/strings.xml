@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">List</string>
+    <string name="action_menu">Actions</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="export_to_csv">Export to CSV</string>
 </resources>
