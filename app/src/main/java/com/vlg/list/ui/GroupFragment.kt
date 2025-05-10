@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileWriter
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class GroupFragment : BaseFragment() {
     override fun onCreateView(
@@ -148,9 +150,15 @@ class GroupFragment : BaseFragment() {
 
     fun saveCsv(context: Context, fileName: String, content: String) {
         try {
-            // Get app-specific external storage directory (no permissions needed)
-            val dir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-            val file = File(dir, fileName)
+            // Use the shared Documents directory
+            val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "")
+            if (!dir.exists()) {
+                dir.mkdirs() // Create the directory if it doesn't exist
+            }
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            val fileName2 = "contacts_$timestamp.csv"
+
+            val file = File(dir, fileName2)
 
             FileWriter(file).use { writer ->
                 writer.write(content)
